@@ -1,16 +1,24 @@
 package models
 
+import (
+	"time"
+)
+
 type Post struct {
-	ID      int
-	Title   string
-	Content string
-	img     string
+	ID        int
+	Title     string
+	Content   string
+	Img       string
+	CreatedAt time.Time
+	UpdatetAt time.Time
 }
 
-func (p *Post) NewPost(title, content, img string) *Post {
+func (p *Post) NewPost(title, content, img string, createdAt, updatedAt) *Post {
 	return &Post{
 		Title:   title,
 		Content: content,
-		img:     img,
+		Img:     img,
+		CreatedAt: createdAt,
+		UpdatetAt: updatedAt,
 	}
 }
