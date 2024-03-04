@@ -24,21 +24,16 @@ type UserRepository struct {
 	logger *log.Logger
 }
 
-func NewUserRepository(url string, logger *log.Logger) (*UserRepository, error) {
-	db, err := sql.Open("mysql", url)
-
-	if err != nil {
-		logger.Printf("Error opening database: %v", err)
-		return nil, err
+func NewUserRepository(db *sql.DB, logger *log.Logger) (*UserRepository, error) {
+	if db == nil {
+		return nil, fmt.Errorf("db is nil")
 	}
 
-	if err := db.Ping(); err != nil {
-		logger.Printf("Error pinging database: %v", err)
-		return nil, err
+	if logger == nil {
+		return nil, fmt.Errorf("logger is nil")
 	}
 
-	logger.Printf("Connected to database")
-	return &UserRepository{db, logger}, nil
+	return &UserRepository{db: db, logger: logger}, nil
 }
 
 func (repository *UserRepository) Create(user *models.User) (int, error) {
