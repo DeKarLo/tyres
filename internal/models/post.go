@@ -13,11 +13,11 @@ type Post struct {
 	UpdatetAt time.Time
 }
 
-func (p *Post) NewPost(title, content, img string, createdAt, updatedAt) *Post {
+func (p *Post) NewPost(title, content, img string, createdAt, updatedAt time.Time) *Post {
 	return &Post{
-		Title:   title,
-		Content: content,
-		Img:     img,
+		Title:     title,
+		Content:   content,
+		Img:       img,
 		CreatedAt: createdAt,
 		UpdatetAt: updatedAt,
 	}
