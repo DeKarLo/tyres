@@ -43,7 +43,7 @@ func (repository *UserRepository) Create(user *models.User) (int, error) {
 	}
 
 	query := "insert into users (username, email, phone, hashed_password, is_admin, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)"
-	result, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.CreatedAt, user.UpdatedAt)
+	result, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.CreatedAt.String(), user.UpdatedAt.String())
 
 	if err != nil {
 		repository.logger.Printf("Error inserting user: %v", err)
@@ -127,7 +127,7 @@ func (repository *UserRepository) Update(user *models.User) error {
 	}
 
 	query := "update users set username = ?, email = ?, phone = ?, hashed_password = ?, is_admin = ?, updated_at = ? where id = ?"
-	_, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.UpdatedAt, user.ID)
+	_, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.UpdatedAt.String(), user.ID)
 
 	if err != nil {
 		repository.logger.Printf("Error updating user: %v", err)
