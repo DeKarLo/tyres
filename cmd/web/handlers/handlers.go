@@ -26,6 +26,8 @@ type Handler struct {
 type TemplateData struct {
 	Success string
 	Error   string
+	Posts   []*models.Post
+	User    *models.User
 }
 
 func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
@@ -253,7 +255,50 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	return
+	posts, err := h.postService.GetAllPosts()
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var id int
+	var user *models.User
+	cookie, err := r.Cookie("UserID")
+	if err != nil {
+		h.logger.Println("No UserID cookie found:", err)
+	} else {
+		id, err = strconv.Atoi(cookie.Value)
+		if err != nil {
+			h.logger.Println(err)
+		} else {
+			user, err = h.userService.GetByID(id)
+			if err != nil {
+				h.logger.Println(err)
+				user = nil
+			}
+		}
+	}
+
+	templateData := TemplateData{
+		Posts: posts,
+		User:  user,
+	}
+
+	tmpl, err := template.ParseFiles(
+		filepath.Join("cmd/web/ui/views/pages", "posts.tmpl.html"))
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, templateData)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
