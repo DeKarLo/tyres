@@ -384,6 +384,28 @@ func (h *Handler) DeletePost(w http.ResponseWriter, r *http.Request) {
 // Home and about page handlers
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
+	var id int
+	var user *models.User
+	cookie, err := r.Cookie("UserID")
+	if err != nil {
+		h.logger.Println("No UserID cookie found:", err)
+	} else {
+		id, err = strconv.Atoi(cookie.Value)
+		if err != nil {
+			h.logger.Println(err)
+		} else {
+			user, err = h.userService.GetByID(id)
+			if err != nil {
+				h.logger.Println(err)
+				user = nil
+			}
+		}
+	}
+
+	templateData := TemplateData{
+		User: user,
+	}
+
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "home.tmpl.html"),
 	)
@@ -393,7 +415,7 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	err = tmpl.Execute(w, templateData)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -402,6 +424,28 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
+
+	var id int
+	var user *models.User
+	cookie, err := r.Cookie("UserID")
+	if err != nil {
+		h.logger.Println("No UserID cookie found:", err)
+	} else {
+		id, err = strconv.Atoi(cookie.Value)
+		if err != nil {
+			h.logger.Println(err)
+		} else {
+			user, err = h.userService.GetByID(id)
+			if err != nil {
+				h.logger.Println(err)
+				user = nil
+			}
+		}
+	}
+
+	templateData := TemplateData{
+		User: user,
+	}
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "about.tmpl.html"),
 	)
@@ -411,7 +455,7 @@ func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	err = tmpl.Execute(w, templateData)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
