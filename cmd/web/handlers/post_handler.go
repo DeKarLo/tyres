@@ -23,3 +23,7 @@ func GetAllPosts(w http.ResponseWriter, r *http.Request) {
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	return
 }
+
+func DeletePost(w http.ResponseWriter, r *http.Request) {
+	return
+}
