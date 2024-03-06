@@ -10,7 +10,7 @@ import (
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "signup.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base.tmpl.html"),
+		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		log.Println(err)
@@ -33,7 +33,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "login.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base.tmpl.html"),
+		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		log.Println(err)
