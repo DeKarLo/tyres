@@ -82,7 +82,7 @@ func (repository *PostRepository) GetByID(id int) (*models.Post, error) {
 	row := repository.db.QueryRow(query, id)
 
 	post := models.Post{}
-	err := row.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.Price)
+	err := row.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.Img, &post.Price)
 	if err != nil {
 		repository.logger.Printf("Error scanning post: %v", err)
 		return nil, err
@@ -106,8 +106,8 @@ func (repository *PostRepository) GetByName(name string) (*models.Post, error) {
 }
 
 func (repository *PostRepository) Update(post *models.Post) error {
-	query := "update posts set name = ?, description = ?, price = ? where id = ?"
-	_, err := repository.db.Exec(query, post.Title, post.Content, post.Price, post.ID)
+	query := "update posts set title = ?, content = ?, img = ?, price = ? where id = ?"
+	_, err := repository.db.Exec(query, post.Title, post.Content, post.Img, post.Price, post.ID)
 
 	if err != nil {
 		repository.logger.Printf("Error updating post: %v", err)

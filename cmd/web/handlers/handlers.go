@@ -26,6 +26,7 @@ type Handler struct {
 type TemplateData struct {
 	Success string
 	Error   string
+	Post    *models.Post
 	Posts   []*models.Post
 	User    *models.User
 }
@@ -323,6 +324,23 @@ func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
 	postId := httprouter.ParamsFromContext(r.Context()).ByName("id")
 
 	postIdInt, err := strconv.Atoi(postId)
+	var id int
+	var user *models.User
+	cookie, err := r.Cookie("UserID")
+	if err != nil {
+		h.logger.Println("No UserID cookie found:", err)
+	} else {
+		id, err = strconv.Atoi(cookie.Value)
+		if err != nil {
+			h.logger.Println(err)
+		} else {
+			user, err = h.userService.GetByID(id)
+			if err != nil {
+				h.logger.Println(err)
+				user = nil
+			}
+		}
+	}
 
 	if err != nil {
 		h.logger.Println(err)
@@ -331,7 +349,7 @@ func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post, err := h.postService.GetPostByID(postIdInt)
-
+	h.logger.Println(post)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Post was not found", http.StatusNotFound)
@@ -347,7 +365,12 @@ func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, map[string]interface{}{"post": post})
+	templateData := TemplateData{
+		Post: post,
+		User: user,
+	}
+
+	err = tmpl.Execute(w, templateData)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -356,7 +379,49 @@ func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
-	return
+	var form PostForm
+	err := r.ParseForm()
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.formDecoder.Decode(&form, r.PostForm)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	postId := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	postIdInt, err := strconv.Atoi(postId)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	post, err := h.postService.GetPostByID(postIdInt)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	post.Title = form.Title
+	post.Content = form.Content
+	post.Img = form.Img
+	post.Price = form.Price
+
+	err = h.postService.UpdatePost(post)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/posts", http.StatusFound)
 }
 
 func (h *Handler) DeletePost(w http.ResponseWriter, r *http.Request) {
