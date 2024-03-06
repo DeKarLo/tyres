@@ -1,15 +1,12 @@
-{{template "base"}} {{define "main"}}
-
 <div class="container">
     <div class="form-signin w-100 m-auto">
         <form method="POST" action="/login">
             <!-- <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57" /> -->
             <h1 class="h3 mb-3 fw-normal">Sign in now!</h1>
-
-            {{with .error}}
+            {{with .Error}}
             <div class="alert alert-danger">{{.}}</div>
-            {{end}} {{with .success}}
-            <div class="alert alert-success">{{.success}}</div>
+            {{end}} {{with .Success}}
+            <div class="alert alert-success">{{.}}</div>
             {{end}}
 
             <div class="form-floating mb-1">
@@ -32,5 +29,3 @@
         </form>
     </div>
 </div>
-
-{{end}}

@@ -22,8 +22,8 @@ type Handler struct {
 }
 
 type TemplateData struct {
-	success string
-	error   string
+	Success string
+	Error   string
 }
 
 func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
@@ -98,20 +98,22 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
+	tmpl := template.Must(template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "login.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
-	)
-	if err != nil {
-		h.logger.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	))
+
+	// if err != nil {
+	// 	h.logger.Println(err)
+	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// 	return
+	// }
 	data := TemplateData{
-		success: "You have successfully registered!",
+		Success: "You have successfully registered!",
+		Error:   "",
 	}
 
 	err = tmpl.Execute(w, data)
+
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -149,18 +151,23 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 // User profile handler
 
 func (h *Handler) User(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(
+	tmpl := template.Must(template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "profile.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
-	)
+	))
 
-	if err != nil {
-		h.logger.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	user := &models.User{
+		Username: "test",
+		Email:    "shatal@mail.ru",
+		Phone:    "123",
 	}
 
-	err = tmpl.Execute(w, nil)
+	// if err != nil {
+	// 	h.logger.Println(err)
+	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	err := tmpl.Execute(w, user)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

@@ -1,5 +1,7 @@
-{{template "base"}} {{define "main"}}
 <div class="container mt-3">
+    {{if .}}
+    <div class="alert alert-success">{{.}}</div>
+    {{end}}
     <h2 class="mb-4">User Profile</h2>
     <div class="card">
         <div class="card-body">
@@ -16,4 +18,3 @@
         </div>
     </div>
 </div>
-{{end}}
