@@ -12,8 +12,8 @@ func Routes() http.Handler {
 
 	router.HandlerFunc("GET", "/", handlers.Home)
 	router.HandlerFunc("GET", "/about", handlers.About)
-	router.HandlerFunc("GET", "/register", handlers.RegisterPage)
-	router.HandlerFunc("POST", "/register", handlers.Register)
+	router.HandlerFunc("GET", "/signup", handlers.RegisterPage)
+	router.HandlerFunc("POST", "/signup", handlers.Register)
 	router.HandlerFunc("GET", "/login", handlers.LoginPage)
 	router.HandlerFunc("POST", "/login", handlers.Login)
 	router.HandlerFunc("GET", "/logout", handlers.Logout)
