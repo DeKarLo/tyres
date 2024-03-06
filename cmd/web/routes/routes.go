@@ -18,7 +18,6 @@ func Routes(h *handlers.Handler) http.Handler {
 	router.HandlerFunc("POST", "/login", h.Login)
 	router.HandlerFunc("GET", "/logout", h.Logout)
 	router.HandlerFunc("GET", "/profile", h.User)
-	router.HandlerFunc("GET", "/post/view/:id", h.GetPost)
 	router.HandlerFunc("POST", "/post", h.CreatePost)
 	router.HandlerFunc("GET", "/posts", h.GetAllPosts)
 	router.HandlerFunc("PUT", "/post/update/:id", h.UpdatePost)

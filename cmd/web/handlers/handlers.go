@@ -228,30 +228,44 @@ func (h *Handler) User(w http.ResponseWriter, r *http.Request) {
 
 // Post handlers
 
-func (h *Handler) CreatePostPage(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(
-		filepath.Join("cmd/web/ui/views/pages", "create-post.tmpl.html"))
-
-	if err != nil {
-		h.logger.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		h.logger.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-}
-
-func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
-	return
+type PostForm struct {
+	Title   string `form:"title"`
+	Content string `form:"content"`
+	Img     string `form:"img"`
+	Price   int    `form:"price"`
 }
 
 func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
-	return
+	var form PostForm
+	err := r.ParseForm()
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.formDecoder.Decode(&form, r.PostForm)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	post := &models.Post{
+		Title:   form.Title,
+		Content: form.Content,
+		Img:     form.Img,
+		Price:   form.Price,
+	}
+
+	err = h.postService.CreatePost(post)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/posts", http.StatusFound)
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
