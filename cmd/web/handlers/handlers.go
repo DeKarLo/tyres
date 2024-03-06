@@ -25,6 +25,7 @@ type Handler struct {
 
 type TemplateData struct {
 	Success string
+	Error   string
 }
 
 func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
@@ -77,7 +78,6 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	log.Println(form.Email, form.Password, form.RepeatPassword, form.Username, form.Phone)
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -86,7 +86,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user := &models.User{
 		Email:          form.Email,
-		HashedPassword: string(hashedPassword),
+		HashedPassword: string(form.Password),
 		Username:       form.Username,
 		Phone:          form.Phone,
 	}
@@ -109,6 +109,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	// }
 	data := TemplateData{
 		Success: "You have successfully registered!",
+		Error:   "",
 	}
 
 	err = tmpl.Execute(w, &data)
@@ -166,7 +167,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
+	h.logger.Println(user.HashedPassword)
+	h.logger.Println(form.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(form.Password))
 	if err != nil {
 		h.logger.Println(err)
@@ -177,15 +179,22 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
 		Name:    "UserID",
 		Value:   strconv.Itoa(user.ID),
-		Expires: time.Now().Add(24 * time.Hour), // Set expiration time for the cookie
+		Expires: time.Now().Add(24 * time.Hour),
 	}
 	http.SetCookie(w, cookie)
 
-	http.Redirect(w, r, "/user", http.StatusFound)
+	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	return
+	cookie := &http.Cookie{
+		Name:    "UserID",
+		Value:   "",
+		Expires: time.Now().Add(-1 * time.Hour),
+	}
+	http.SetCookie(w, cookie)
+
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 // User profile handler
@@ -195,19 +204,19 @@ func (h *Handler) User(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("cmd/web/ui/views/pages", "profile.tmpl.html"),
 	))
 
-	user := &models.User{
-		Username: "test",
-		Email:    "shatal@mail.ru",
-		Phone:    "123",
-	}
+	cookie, _ := r.Cookie("UserID")
+
+	id, _ := strconv.Atoi(cookie.Value)
+
+	user, _ := h.userService.GetByID(id)
 
 	// if err != nil {
 	// 	h.logger.Println(err)
 	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	// 	return
 	// }
-
-	err := tmpl.Execute(w, user)
+	h.logger.Println(user)
+	err := tmpl.Execute(w, &user)
 	if err != nil {
 		h.logger.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
