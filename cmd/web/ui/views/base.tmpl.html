@@ -5,11 +5,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tyres.kz</title>
-        {{template 'imports' .}}
+        {{template "imports" .}}
     </head>
     <body>
-        {{template 'navbar' .}} {{template "main" .}}
-        <footer>Made by <a href="https://github.com/prenl">Yelnur Abdrakhmanov</a>, <a href="https://github.com/DeKarLo">Karen Ananyan</a> & <a href="https://github.com/Qanysh">Arsen Zhamshitov</a> in 2024</footer>
+        {{template "nav" .}} {{template "main" .}}
+        <footer>
+            Made by <a href="https://github.com/prenl">Yelnur Abdrakhmanov</a>, <a href="https://github.com/DeKarLo">Karen Ananyan</a> &
+            <a href="https://github.com/Qanysh">Arsen Zhamshitov</a> in 2024
+        </footer>
     </body>
 </html>
 {{end}}
