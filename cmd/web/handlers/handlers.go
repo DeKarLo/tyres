@@ -237,6 +237,9 @@ type PostForm struct {
 
 func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	var form PostForm
+	cookie, _ := r.Cookie("UserID")
+	userID, _ := strconv.Atoi(cookie.Value)
+	user, _ := h.userService.GetByID(userID)
 	err := r.ParseForm()
 	if err != nil {
 		h.logger.Println(err)
@@ -256,6 +259,7 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		Content: form.Content,
 		Img:     form.Img,
 		Price:   form.Price,
+		UserID:  user.ID,
 	}
 
 	err = h.postService.CreatePost(post)
@@ -356,7 +360,25 @@ func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeletePost(w http.ResponseWriter, r *http.Request) {
-	return
+	postId := httprouter.ParamsFromContext(r.Context()).ByName("id")
+
+	postIdInt, err := strconv.Atoi(postId)
+	h.logger.Println(postIdInt)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.postService.DeletePost(postIdInt)
+
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/posts", http.StatusFound)
 }
 
 // Home and about page handlers

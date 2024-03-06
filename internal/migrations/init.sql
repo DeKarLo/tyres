@@ -12,6 +12,7 @@ create table if not exists users (
 
 create table if not exists posts (
     id int primary key auto_increment,
+    user_id int not null,
     title varchar(255) not null,
     content text not null,
     img varchar(255) not null,

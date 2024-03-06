@@ -41,8 +41,8 @@ func (repository *PostRepository) Create(post *models.Post) error {
 		return nil
 	}
 
-	query := "insert into posts (title, content, img, price) values (?, ?, ?, ?)"
-	_, err := repository.db.Exec(query, post.Title, post.Content, post.Img, post.Price)
+	query := "insert into posts (title, content, img, price, user_id) values (?, ?, ?, ?, ?)"
+	_, err := repository.db.Exec(query, post.Title, post.Content, post.Img, post.Price, post.UserID)
 
 	if err != nil {
 		repository.logger.Printf("Error inserting post: %v", err)
@@ -66,7 +66,7 @@ func (repository *PostRepository) GetAll() ([]*models.Post, error) {
 	posts := make([]*models.Post, 0)
 	for rows.Next() {
 		post := models.Post{}
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Img, &post.Price)
+		err := rows.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.Img, &post.Price)
 		if err != nil {
 			repository.logger.Printf("Error scanning post: %v", err)
 			return nil, err
@@ -82,7 +82,7 @@ func (repository *PostRepository) GetByID(id int) (*models.Post, error) {
 	row := repository.db.QueryRow(query, id)
 
 	post := models.Post{}
-	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Price)
+	err := row.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.Price)
 	if err != nil {
 		repository.logger.Printf("Error scanning post: %v", err)
 		return nil, err
@@ -96,7 +96,7 @@ func (repository *PostRepository) GetByName(name string) (*models.Post, error) {
 	row := repository.db.QueryRow(query, name)
 
 	post := models.Post{}
-	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Price)
+	err := row.Scan(&post.ID, &post.UserID, &post.Title, &post.Content, &post.Price)
 	if err != nil {
 		repository.logger.Printf("Error scanning post: %v", err)
 		return nil, err

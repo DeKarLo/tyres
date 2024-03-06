@@ -136,11 +136,13 @@
                                     <div class="card-body">
                                         <h5 class="card-title">{{.Title}}</h5>
                                         <p class="card-text">{{.Content}}</p>
-                                        <p class="card-text"><div class="text-muted"></div> ${{.Price}}</p>
-                                        {{if eq .UserID $root.User.ID}}
+                                        <p class="card-text"><div class="text-muted">Starting: </div> ${{.Price}}</p>
+
+                                        {{if and $root.User (eq .UserID $root.User.ID)}}
                                         <a class="btn btn-success" href="/post/update/{{.ID}}">Edit</a>
                                         <a class="btn btn-danger" href="/post/delete/{{.ID}}">Delete</a>
                                         {{end}}
+
                                     </div>
                                 </div>
                             </div>
