@@ -11,8 +11,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "home.tmpl.html"),
 		filepath.Join("cmd/web/ui/views", "base.tmpl.html"),
-		filepath.Join("cmd/web/ui/views/partials", "navbar.tmpl.html"),
-		filepath.Join("cmd/web/ui/views/partials", "imports.tmpl.html"),
 	)
 	if err != nil {
 		log.Println(err)
