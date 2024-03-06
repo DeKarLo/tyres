@@ -23,6 +23,7 @@ func Routes() http.Handler {
 	router.HandlerFunc("POST", "/post/", handlers.CreatePost)
 	router.HandlerFunc("GET", "/posts", handlers.GetAllPosts)
 	router.HandlerFunc("PUT", "/post/update/:id", handlers.UpdatePost)
+	router.HandlerFunc("GET", "/post/update/:id", handlers.UpdatePostPage)
 	router.HandlerFunc("DELETE", "/post/delete/:id", handlers.DeletePost)
 
 	return router
