@@ -6,10 +6,10 @@
             <!-- <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57" /> -->
             <h1 class="h3 mb-3 fw-normal">Sign in now!</h1>
 
-            {{if .error}}
-            <div class="alert alert-danger">{{.error}}</div>
-            {{else if .success}}
-            <div class="alert alert-success">{{.success}}</div>
+            {{with .error}}
+            <div class="alert alert-danger">{{.}}</div>
+            {{end}} {{with .success}}
+            <div class="alert alert-danger">{{.}}</div>
             {{end}}
 
             <div class="form-floating mb-1">
