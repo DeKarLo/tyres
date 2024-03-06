@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"time"
+
 	"github.com/go-playground/form/v4"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
@@ -39,7 +41,6 @@ func NewHandler(userService services.UserServiceInterface, postService services.
 func (h *Handler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "signup.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		h.logger.Println(err)
@@ -137,8 +138,50 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type loginForm struct {
+	Email    string `form:"email"`
+	Password string `form:"password"`
+}
+
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	return
+	var form loginForm
+	err := r.ParseForm()
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.formDecoder.Decode(&form, r.PostForm)
+
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	user, err := h.userService.GetByEmail(form.Email)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(form.Password))
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:    "UserID",
+		Value:   strconv.Itoa(user.ID),
+		Expires: time.Now().Add(24 * time.Hour), // Set expiration time for the cookie
+	}
+	http.SetCookie(w, cookie)
+
+	http.Redirect(w, r, "/user", http.StatusFound)
 }
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {

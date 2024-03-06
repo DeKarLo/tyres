@@ -7,10 +7,7 @@ create table if not exists users (
     username varchar(255) not null,
     hashed_password varchar(255) not null,
     email varchar(255) not null,
-    phone varchar(255) not null,
-    is_admin boolean not null,
-    created_at varchar(255) not null,
-    updated_at varchar(255) not null
+    phone varchar(255) not null
 );
 
 create table if not exists posts (
@@ -18,7 +15,5 @@ create table if not exists posts (
     title varchar(255) not null,
     content text not null,
     img varchar(255) not null,
-    price int not null,
-    created_at varchar(255) not null,
-    updated_at varchar(255) not null
+    price int not null
 );

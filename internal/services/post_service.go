@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"tyres.kz/internal/models"
 	"tyres.kz/internal/repositories"
@@ -40,9 +39,6 @@ func (service *PostService) CreatePost(post *models.Post) error {
 		service.logger.Println("Attempted to create nil value post")
 		return nil
 	}
-
-	post.CreatedAt = time.Now()
-	post.UpdatedAt = time.Now()
 
 	err := service.postRepository.Create(post)
 	if err != nil {
@@ -84,7 +80,6 @@ func (service *PostService) GetPostByName(name string) (*models.Post, error) {
 }
 
 func (service *PostService) UpdatePost(post *models.Post) error {
-	post.UpdatedAt = time.Now()
 	err := service.postRepository.Update(post)
 	if err != nil {
 		service.logger.Printf("Error updating post: %v", err)

@@ -20,7 +20,7 @@ type UserRepositoryInterface interface {
 }
 
 type UserRepository struct {
-	db *sql.DB
+	db     *sql.DB
 	logger *log.Logger
 }
 
@@ -42,8 +42,8 @@ func (repository *UserRepository) Create(user *models.User) (int, error) {
 		return 0, fmt.Errorf("user is nil")
 	}
 
-	query := "insert into users (username, email, phone, hashed_password, is_admin, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)"
-	result, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.CreatedAt.String(), user.UpdatedAt.String())
+	query := "insert into users (username, email, phone, hashed_password) values (?, ?, ?, ?)"
+	result, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword)
 
 	if err != nil {
 		repository.logger.Printf("Error inserting user: %v", err)
@@ -61,11 +61,11 @@ func (repository *UserRepository) Create(user *models.User) (int, error) {
 }
 
 func (repository *UserRepository) GetByID(id int) (*models.User, error) {
-	query := "select id, username, email, phone, hashed_password, is_admin, created_at, updated_at from users where id = ?"
+	query := "select id, username, email, phone, hashed_password from users where id = ?"
 	row := repository.db.QueryRow(query, id)
 
 	user := &models.User{}
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword)
 
 	if err != nil {
 		repository.logger.Printf("Error scanning user: %v", err)
@@ -76,11 +76,11 @@ func (repository *UserRepository) GetByID(id int) (*models.User, error) {
 }
 
 func (repository *UserRepository) GetByUsername(username string) (*models.User, error) {
-	query := "select id, username, email, phone, hashed_password, is_admin, created_at, updated_at from users where username = ?"
+	query := "select id, username, email, phone, hashed_password from users where username = ?"
 	row := repository.db.QueryRow(query, username)
 
 	user := &models.User{}
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword)
 
 	if err != nil {
 		repository.logger.Printf("Error scanning user: %v", err)
@@ -91,11 +91,11 @@ func (repository *UserRepository) GetByUsername(username string) (*models.User, 
 }
 
 func (repository *UserRepository) GetByEmail(email string) (*models.User, error) {
-	query := "select id, username, email, phone, hashed_password, is_admin, created_at, updated_at from users where email = ?"
+	query := "select id, username, email, phone, hashed_password from users where email = ?"
 	row := repository.db.QueryRow(query, email)
 
 	user := &models.User{}
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword)
 
 	if err != nil {
 		repository.logger.Printf("Error scanning user: %v", err)
@@ -106,11 +106,11 @@ func (repository *UserRepository) GetByEmail(email string) (*models.User, error)
 }
 
 func (repository *UserRepository) GetByPhone(phone string) (*models.User, error) {
-	query := "select id, username, email, phone, hashed_password, is_admin, created_at, updated_at from users where phone = ?"
+	query := "select id, username, email, phone, hashed_password from users where phone = ?"
 	row := repository.db.QueryRow(query, phone)
 
 	user := &models.User{}
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Phone, &user.HashedPassword)
 
 	if err != nil {
 		repository.logger.Printf("Error scanning user: %v", err)
@@ -126,8 +126,8 @@ func (repository *UserRepository) Update(user *models.User) error {
 		return fmt.Errorf("user is nil")
 	}
 
-	query := "update users set username = ?, email = ?, phone = ?, hashed_password = ?, is_admin = ?, updated_at = ? where id = ?"
-	_, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.IsAdmin, user.UpdatedAt.String(), user.ID)
+	query := "update users set username = ?, email = ?, phone = ?, hashed_password = ? where id = ?"
+	_, err := repository.db.Exec(query, user.Username, user.Email, user.Phone, user.HashedPassword, user.ID)
 
 	if err != nil {
 		repository.logger.Printf("Error updating user: %v", err)

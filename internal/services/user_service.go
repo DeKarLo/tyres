@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"tyres.kz/internal/models"
@@ -48,8 +47,6 @@ func (service *UserService) Create(user *models.User) (int, error) {
 	}
 
 	user.HashedPassword = string(hash)
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
 
 	return service.userRepository.Create(user)
 }
@@ -71,7 +68,6 @@ func (service *UserService) GetByPhone(phone string) (*models.User, error) {
 }
 
 func (service *UserService) Update(user *models.User) error {
-	user.UpdatedAt = time.Now()
 	return service.userRepository.Update(user)
 }
 
