@@ -25,7 +25,7 @@ type UserService struct {
 	logger         *log.Logger
 }
 
-func NewUserService(userRepository repositories.UserRepositoryInterface, logger *log.Logger) (*UserService, error) {
+func NewUserService(userRepository repositories.UserRepositoryInterface, logger *log.Logger) (UserServiceInterface, error) {
 	if userRepository == nil {
 		return nil, fmt.Errorf("userRepository is nil")
 	}
@@ -39,7 +39,7 @@ func NewUserService(userRepository repositories.UserRepositoryInterface, logger 
 
 func (service *UserService) Create(user *models.User) (int, error) {
 	passwordByte := []byte(user.HashedPassword)
-	
+
 	hash, err := bcrypt.GenerateFromPassword(passwordByte, bcrypt.DefaultCost)
 
 	if err != nil {
@@ -48,8 +48,8 @@ func (service *UserService) Create(user *models.User) (int, error) {
 	}
 
 	user.HashedPassword = string(hash)
-	user.CreatedAt = time.Time{};
-	user.UpdatedAt = time.Time{};
+	user.CreatedAt = time.Time{}
+	user.UpdatedAt = time.Time{}
 
 	return service.userRepository.Create(user)
 }
@@ -71,7 +71,7 @@ func (service *UserService) GetByPhone(phone string) (*models.User, error) {
 }
 
 func (service *UserService) Update(user *models.User) error {
-	user.UpdatedAt = time.Time{};
+	user.UpdatedAt = time.Time{}
 	return service.userRepository.Update(user)
 }
 

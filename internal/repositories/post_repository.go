@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -22,8 +23,16 @@ type PostRepository struct {
 	logger *log.Logger
 }
 
-func CreatePostRepository(db *sql.DB, logger *log.Logger) *PostRepository {
-	return &PostRepository{db, logger}
+func NewPostRepository(db *sql.DB, logger *log.Logger) (*PostRepository, error) {
+	if db == nil {
+		return nil, fmt.Errorf("db is nil")
+	}
+
+	if logger == nil {
+		return nil, fmt.Errorf("logger is nil")
+	}
+
+	return &PostRepository{db: db, logger: logger}, nil
 }
 
 func (repository *PostRepository) Create(post *models.Post) error {

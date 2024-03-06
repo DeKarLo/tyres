@@ -7,24 +7,24 @@ import (
 	"tyres.kz/cmd/web/handlers"
 )
 
-func Routes() http.Handler {
+func Routes(h *handlers.Handler) http.Handler {
 	router := httprouter.New()
 
-	router.HandlerFunc("GET", "/", handlers.Home)
-	router.HandlerFunc("GET", "/about", handlers.About)
-	router.HandlerFunc("GET", "/signup", handlers.RegisterPage)
-	router.HandlerFunc("POST", "/signup", handlers.Register)
-	router.HandlerFunc("GET", "/login", handlers.LoginPage)
-	router.HandlerFunc("POST", "/login", handlers.Login)
-	router.HandlerFunc("GET", "/logout", handlers.Logout)
-	router.HandlerFunc("GET", "/profile", handlers.User)
-	router.HandlerFunc("GET", "/post/create", handlers.CreatePostPage)
-	router.HandlerFunc("GET", "/post/view/:id", handlers.GetPost)
-	router.HandlerFunc("POST", "/post/", handlers.CreatePost)
-	router.HandlerFunc("GET", "/posts", handlers.GetAllPosts)
-	router.HandlerFunc("PUT", "/post/update/:id", handlers.UpdatePost)
-	router.HandlerFunc("GET", "/post/update/:id", handlers.UpdatePostPage)
-	router.HandlerFunc("DELETE", "/post/delete/:id", handlers.DeletePost)
+	router.HandlerFunc("GET", "/", h.Home)
+	router.HandlerFunc("GET", "/about", h.About)
+	router.HandlerFunc("GET", "/signup", h.RegisterPage)
+	router.HandlerFunc("POST", "/signup", h.Register)
+	router.HandlerFunc("GET", "/login", h.LoginPage)
+	router.HandlerFunc("POST", "/login", h.Login)
+	router.HandlerFunc("GET", "/logout", h.Logout)
+	router.HandlerFunc("GET", "/profile", h.User)
+	router.HandlerFunc("GET", "/post/create", h.CreatePostPage)
+	router.HandlerFunc("GET", "/post/view/:id", h.GetPost)
+	router.HandlerFunc("POST", "/post/", h.CreatePost)
+	router.HandlerFunc("GET", "/posts", h.GetAllPosts)
+	router.HandlerFunc("PUT", "/post/update/:id", h.UpdatePost)
+	router.HandlerFunc("GET", "/post/update/:id", h.UpdatePostPage)
+	router.HandlerFunc("DELETE", "/post/delete/:id", h.DeletePost)
 
 	return router
 }

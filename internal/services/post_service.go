@@ -1,21 +1,37 @@
 package services
 
 import (
+	"fmt"
 	"log"
+
 	"tyres.kz/internal/models"
 	"tyres.kz/internal/repositories"
 )
+
+type PostServiceInterface interface {
+	CreatePost(post *models.Post) error
+	GetAllPosts() ([]*models.Post, error)
+	GetPostByID(id int) (*models.Post, error)
+	GetPostByName(name string) (*models.Post, error)
+	UpdatePost(post *models.Post) error
+	DeletePost(id int) error
+}
 
 type PostService struct {
 	postRepository repositories.PostRepositoryInterface
 	logger         *log.Logger
 }
 
-func NewPostService(postRepository repositories.PostRepositoryInterface, logger *log.Logger) *PostService {
-	return &PostService{
-		postRepository: postRepository,
-		logger:         logger,
+func NewPostService(postRepository repositories.PostRepositoryInterface, logger *log.Logger) (PostServiceInterface, error) {
+	if postRepository == nil {
+		return nil, fmt.Errorf("userRepository is nil")
 	}
+
+	if logger == nil {
+		return nil, fmt.Errorf("logger is nil")
+	}
+
+	return &PostService{postRepository: postRepository, logger: logger}, nil
 }
 
 func (service *PostService) CreatePost(post *models.Post) error {
