@@ -17,9 +17,11 @@ import (
 func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	db, err := sql.Open("mysql", "web:123455@tcp(localhost:3306)/tyres")
+	db, err := sql.Open("mysql", "root:1112@tcp(localhost:3306)/tyres")
 	if err != nil {
 		errorLog.Fatal(err)
+	} else {
+		fmt.Println("Database connected")
 	}
 	defer db.Close()
 
@@ -29,7 +31,7 @@ func main() {
 	userService, _ := services.NewUserService(userRepo, errorLog)
 	postService, _ := services.NewPostService(postRepo, errorLog)
 
-	handlers := handlers.NewHandler(&userService, &postService, errorLog)
+	handlers := handlers.NewHandler(userService, postService, errorLog)
 
 	srv := &http.Server{
 		Addr:         ":4000",
@@ -40,7 +42,7 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	fmt.Println("Server is running on http://localhost:8080")
-	err := srv.ListenAndServe()
-	errorLog.Fatal(err)
+	fmt.Println("Server is running on http://localhost:4000")
+	serverError := srv.ListenAndServe()
+	errorLog.Fatal(serverError)
 }

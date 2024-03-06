@@ -11,12 +11,12 @@ import (
 )
 
 type Handler struct {
-	userService *services.UserServiceInterface
-	postService *services.PostServiceInterface
+	userService services.UserServiceInterface
+	postService services.PostServiceInterface
 	logger 		*log.Logger
 }
 
-func NewHandler(userService *services.UserServiceInterface, postService *services.PostServiceInterface, logger *log.Logger) *Handler {
+func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
 	return &Handler{
 		userService: userService,
 		postService: postService,
