@@ -40,9 +40,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/about">About Us</a>
                             </li>
-                            {{ if .user }}
+                            {{ if . }}
                             <li class="nav-item">
-                                <a class="nav-link" href="/profile">{{.user.Username}}</a>
+                                <a class="nav-link" href="/profile">{{.Username}}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">Log out</a>
@@ -66,16 +66,10 @@
                 <h2 class="mb-4">User Profile</h2>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title mb-3">Username</h5>
-                        <p class="card-text"><strong>Email:</strong> user@example.com</p>
-                        <p class="card-text"><strong>Phone:</strong> +123456789</p>
-                        <p class="card-text"><strong>Hashed Password:</strong> 5f4dcc3b5aa765d61d8327deb882cf99</p>
-                        <p class="card-text"><strong>Created At:</strong> 2021-01-01 12:00:00</p>
-                        <p class="card-text"><strong>Updated At:</strong> 2021-01-02 12:00:00</p>
-                        <p class="card-text align-items-center d-flex">
-                            <strong>Admin Status:&nbsp;&nbsp;</strong>
-                            <span class="badge bg-success">Admin</span>
-                        </p>
+                        <h5 class="card-title mb-3">{{.Username}}</h5>
+                        <p class="card-text"><strong>Email:</strong> {{.Email}}</p>
+                        <p class="card-text"><strong>Phone:</strong> {{.Phone}}</p>
+                        <p class="card-text"><strong>Hashed Password:</strong> {{.HashedPassword}}</p>
                     </div>
                 </div>
             </div>
