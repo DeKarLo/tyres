@@ -9,7 +9,7 @@
             {{with .error}}
             <div class="alert alert-danger">{{.}}</div>
             {{end}} {{with .success}}
-            <div class="alert alert-danger">{{.}}</div>
+            <div class="alert alert-success">{{.success}}</div>
             {{end}}
 
             <div class="form-floating mb-1">
@@ -26,7 +26,9 @@
                 <label class="form-check-label" for="flexCheckDefault">Remember me</label>
             </div>
             <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
-            <p class="mt-5 mb-3 text-body-secondary">Still don't have an account? <a href="/signup" class="text-decoration-none fw-semibold">Create free account</a></p>
+            <p class="mt-5 mb-3 text-body-secondary">
+                Still don't have an account? <a href="/signup" class="text-decoration-none fw-semibold">Create free account</a>
+            </p>
         </form>
     </div>
 </div>

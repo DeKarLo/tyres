@@ -20,7 +20,7 @@ func Routes(h *handlers.Handler) http.Handler {
 	router.HandlerFunc("GET", "/profile", h.User)
 	router.HandlerFunc("GET", "/post/create", h.CreatePostPage)
 	router.HandlerFunc("GET", "/post/view/:id", h.GetPost)
-	router.HandlerFunc("POST", "/post/", h.CreatePost)
+	router.HandlerFunc("POST", "/post", h.CreatePost)
 	router.HandlerFunc("GET", "/posts", h.GetAllPosts)
 	router.HandlerFunc("PUT", "/post/update/:id", h.UpdatePost)
 	router.HandlerFunc("GET", "/post/update/:id", h.UpdatePostPage)

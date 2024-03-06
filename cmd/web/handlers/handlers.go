@@ -7,20 +7,31 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/go-playground/form/v4"
+	"github.com/julienschmidt/httprouter"
+	"golang.org/x/crypto/bcrypt"
+	"tyres.kz/internal/models"
 	"tyres.kz/internal/services"
 )
 
 type Handler struct {
 	userService services.UserServiceInterface
 	postService services.PostServiceInterface
-	logger 		*log.Logger
+	formDecoder *form.Decoder
+	logger      *log.Logger
+}
+
+type TemplateData struct {
+	success string
+	error   string
 }
 
 func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
 	return &Handler{
 		userService: userService,
 		postService: postService,
-		logger: logger,
+		formDecoder: form.NewDecoder(),
+		logger:      logger,
 	}
 }
 
@@ -45,8 +56,67 @@ func (h *Handler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type RegisterForm struct {
+	Email          string `form:"email"`
+	Password       string `form:"password"`
+	RepeatPassword string `form:"repeat_password"`
+	Username       string `form:"username"`
+	Phone          string `form:"phone"`
+}
+
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
-	return
+	var form RegisterForm
+	err := r.ParseForm()
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.formDecoder.Decode(&form, r.PostForm)
+
+	log.Println(form.Email, form.Password, form.RepeatPassword, form.Username, form.Phone)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	user := &models.User{
+		Email:          form.Email,
+		HashedPassword: string(hashedPassword),
+		Username:       form.Username,
+		Phone:          form.Phone,
+	}
+
+	_, err = h.userService.Create(user)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		filepath.Join("cmd/web/ui/views/pages", "login.tmpl.html"),
+		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
+	)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	data := TemplateData{
+		success: "You have successfully registered!",
+	}
+
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +149,23 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 // User profile handler
 
 func (h *Handler) User(w http.ResponseWriter, r *http.Request) {
-	return
+	tmpl, err := template.ParseFiles(
+		filepath.Join("cmd/web/ui/views/pages", "profile.tmpl.html"),
+		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
+	)
+
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		h.logger.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 // Post handlers
@@ -116,7 +202,8 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
-	postId := r.URL.Query().Get("id")
+	postId := httprouter.ParamsFromContext(r.Context()).ByName("id")
+
 	postIdInt, err := strconv.Atoi(postId)
 
 	if err != nil {
