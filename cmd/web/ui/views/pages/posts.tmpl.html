@@ -126,15 +126,16 @@
                 <div class="row">
                     {{range .Posts}}
                     <div class="col-md-4 mb-4">
-                        <div class="card">
+                        <div class="card rounded-3">
                             <div class="row no-gutters">
                                 <div class="col-md-4">
-                                    <img src="{{.Img}}" class="card-img" alt="{{.Title}}" />
+                                    <img src="{{.Img}}" class="card-img rounded-3" alt="{{.Title}}" />
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
                                         <h5 class="card-title">{{.Title}}</h5>
                                         <p class="card-text">{{.Content}}</p>
+                                        <p class="card-text"><div class="text-muted"></div> ${{.Price}}</p>
                                     </div>
                                 </div>
                             </div>
