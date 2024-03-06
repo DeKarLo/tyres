@@ -1,0 +1,25 @@
+{{template "base"}} {{define "main"}}
+
+<div class="container mt-3">
+    <div class="fs-2 fw-semibold">Create Post</div>
+    <form action="/post" method="POST">
+        <div class="form-group mb-2">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required />
+        </div>
+        <div class="form-group mb-2">
+            <label for="content">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="3" placeholder="Enter content" required></textarea>
+        </div>
+        <div class="form-group mb-2">
+            <label for="img">Image Link URL</label>
+            <input type="url" class="form-control" id="img" name="img" placeholder="Enter image link URL" required />
+        </div>
+        <div class="form-group mb-2">
+            <label for="price">Price in US $</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="Enter price" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Post</button>
+    </form>
+</div>
+{{end}}
