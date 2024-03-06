@@ -40,7 +40,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/about">About Us</a>
                             </li>
-                            {{ if .user.isAuthenticated }}
+                            {{ if .user }}
                             <li class="nav-item">
                                 <a class="nav-link" href="/profile">{{.user.Username}}</a>
                             </li>
@@ -110,6 +110,4 @@
         </footer>
     </div>
 </body>
-</html>
-    </body>
 </html>
