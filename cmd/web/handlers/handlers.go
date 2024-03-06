@@ -23,7 +23,6 @@ type Handler struct {
 
 type TemplateData struct {
 	Success string
-	Error   string
 }
 
 func NewHandler(userService services.UserServiceInterface, postService services.PostServiceInterface, logger *log.Logger) *Handler {
@@ -109,10 +108,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	// }
 	data := TemplateData{
 		Success: "You have successfully registered!",
-		Error:   "",
 	}
 
-	err = tmpl.Execute(w, data)
+	err = tmpl.Execute(w, &data)
 
 	if err != nil {
 		h.logger.Println(err)
@@ -124,7 +122,6 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "login.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		h.logger.Println(err)
@@ -179,8 +176,7 @@ func (h *Handler) User(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreatePostPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
-		filepath.Join("cmd/web/ui/views/pages", "create-post.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"))
+		filepath.Join("cmd/web/ui/views/pages", "create-post.tmpl.html"))
 
 	if err != nil {
 		h.logger.Println(err)
@@ -228,8 +224,7 @@ func (h *Handler) UpdatePostPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		filepath.Join("cmd/web/ui/views/pages", "update-post.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"))
+		filepath.Join("cmd/web/ui/views/pages", "update-post.tmpl.html"))
 
 	if err != nil {
 		log.Println(err)
@@ -258,7 +253,6 @@ func (h *Handler) DeletePost(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "home.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		h.logger.Println(err)
@@ -277,7 +271,6 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		filepath.Join("cmd/web/ui/views/pages", "about.tmpl.html"),
-		filepath.Join("cmd/web/ui/views", "base-100vh.tmpl.html"),
 	)
 	if err != nil {
 		h.logger.Println(err)
